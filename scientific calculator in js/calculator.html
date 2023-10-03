@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALCULATOR</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<script>
+    var op,num1='',num2='',dot_check=false,sign='';
+    function add(temp)
+    {
+                ///FOR ALL AC--&&--C requests
+        if(temp=='AC'||temp=="C"){
+            if(temp=='AC'){
+                sign='',dot_check=false,op='',num1='',num2='';
+                document.getElementById("screen").value='';
+                document.getElementById("process").value='';
+            }else{
+                var ch=document.getElementById("screen").value;
+                ch=Math.floor(ch / 10).toString() //to remove last character 
+                document.getElementById("screen").value=ch;
+                dot_check=false;
+                if(ch=='0'){
+                    sign='',dot_check=false,op='',num1='',num2='';
+                    document.getElementById("screen").value='';
+                    document.getElementById("process").value='';           
+                }
+            }
+        }
+                ///FOR OPERATOR REQUESTS
+        else if(temp=="/"||temp=="x"||temp=="-"||temp=="+"||temp=="="){
+            if(document.getElementById('process').value!=''&&document.getElementById('screen').value==''){
+                op=temp;
+                // window.alert(temp);
+                // document.getElementById("process").value=num1+op;
+                document.getElementById("screen").value='';
+                document.getElementById("process").value=num1+op;
+                
+            }
+            if(document.getElementById('screen').value!='') ///for first value can't be opretor
+            {
+                    //NUM->1;
+                if(num1==''){
+                    if(temp=='='){
+                        sign='=';
+                    }
+                    else{
+                    op=temp;
+                    num1=document.getElementById("screen").value;
+                    // window.alert("NUM-1 :"+num1);
+                    dot_check=false;
+                    document.getElementById("screen").value='';
+                    document.getElementById("process").value=num1+op;
+                }
+                }    //NUM->2;
+                else
+                {
+                    // if(temp=="/"||temp=="x"||temp=="-"||temp=="+"||temp=="="){
+                    //     op=temp;
+                    //     num1=document.getElementById("screen").value;
+                    //     document.getElementById("screen").value='';
+                    //     document.getElementById("process").value=num1+op;
+                    //   //  window.alert(op);
+                    // }
+                    num2=document.getElementById("screen").value;
+                    // window.alert('NUM1:'+num1+"\nNum2:" +num2+"\nOP:"+op+"\ntemp"+temp);
+                    var res=calculate(num1,num2,op);
+                    //window.alert(isInt(res));
+                    document.getElementById("screen").value=res;
+                    document.getElementById("process").value='';
+                    num1=num2='';
+                    if(temp=="/"||temp=="x"||temp=="-"||temp=="+"){
+                        op=temp;
+                        num1=document.getElementById("screen").value;
+                        // window.alert("NUM-1 :"+num1);
+                        dot_check=false;
+                        document.getElementById("screen").value='';
+                        document.getElementById("process").value=num1+op;
+                    }
+                    if(isInt(res)==false){
+                        dot_check=true;
+                    }
+                }
+            }
+        }
+                ///FOR CONTROL SCREEN DATA
+        else{//scientific data
+                ///TO HANDLE +/-
+            if(temp=="+/-"){
+                var val;
+                val=document.getElementById("screen").value;
+                val=eval(val*-1);
+                document.getElementById("screen").value=val;
+            }
+                ///CONTROL MULTIPLE .
+            else  if(temp=='.'&&dot_check==false){
+                dot_check=true;
+                document.getElementById("screen").value+=temp;
+            }
+                ///to handle %
+            else if(temp=="%"){
+                if(document.getElementById("screen").value!='')
+                {
+                    var val=document.getElementById("screen").value;
+                    val=eval(val)/100;
+                    document.getElementById("screen").value=+val;
+                    if(isInt(val)==false){
+                        dot_check=true;
+                    }
+                }
+            }
+            else if(temp=="1/x"){
+                if(document.getElementById("screen").value!=''&&document.getElementById("screen").value!='0')
+                {
+                    var val=document.getElementById("screen").value;
+                    val=eval(1/val);
+                    document.getElementById("screen").value=+val;
+                    if(isInt(val)==false){
+                        dot_check=true;
+                    }
+                }
+            }
+            else if(temp=="x²"){
+                if(document.getElementById("screen").value!=''&&document.getElementById("screen").value!='0')
+                {
+                    var val=document.getElementById("screen").value;
+                    val=eval(val*val);
+                    document.getElementById("screen").value=+val;
+                    if(isInt(val)==false){
+                        dot_check=true;
+                    }
+                }
+            }
+            else if(temp=="√x"){
+                if(document.getElementById("screen").value!=''&&document.getElementById("screen").value!='0')
+                {
+                    var val=document.getElementById("screen").value;
+                    val=eval(val);
+                    val=Math.sqrt(val);
+                    document.getElementById("screen").value=+val;
+                    if(isInt(val)==false){
+                        dot_check=true;
+                    }
+                }
+            }
+            else if(temp=="∛"){
+                if(document.getElementById("screen").value!=''&&document.getElementById("screen").value!='0')
+                {
+                    var val=document.getElementById("screen").value;
+                    val=eval(val);
+                    val=Math.cbrt(+val);
+                    document.getElementById("screen").value=+val;
+                    if(isInt(val)==false){
+                        dot_check=true;
+                    }
+                }
+            }
+            ///SHOW DATA
+            else if(temp!='.'){
+                document.getElementById("screen").value+=temp;
+            }
+        }
+    }  
+    //for noraml operator only
+    function calculate(num1,num2,op)
+    {
+        if(op=="+"){
+            return eval(num1)+eval(num2);
+        }else if(op=="-"){
+            return eval(num1)-eval(num2);
+        }else if(op=="/"){
+            return eval(num1)/eval(num2);
+        }else if(op=="x"){
+            return eval(num1)*eval(num2);
+        }
+    }
+    ///data type check
+    function isInt(n)
+    {
+        return Number(n) === n && n % 1 === 0;
+    }
+ 
+</script>
+
+
+<h2>VERY CHOKAS CALCULATOR</h2>
+<h3>BY</h3>
+<h3 class="name">STUDENT OF: (RANA SAAB)</h3>
+<body>
+    <div class="form">
+        <div>
+            <input type="text" name="process" id="process" readonly>
+            <input type="text" name="screen" id="screen" readonly>
+        </div> 
+
+        <div>
+            <button onclick="add('AC')" class="operator" >AC</button>
+            <button onclick="add('C')" class="operator" >C</button>
+            <button onclick="add('√x')" class="operator" >√x</button>
+            <button onclick="add('∛')" class="operator" >∛</button>
+        </div>
+        
+        <div>
+            <button onclick="add('1/x')" class="operator" >1/x</button>
+            <button onclick="add('x²')" class="operator" >x²</button>
+            <button onclick="add('+/-')" class="operator" >+/-</button>
+            <button onclick="add('/')" class="operator" >/</button>
+        </div>
+
+        <div>
+            <button onclick="add('7')" >7</button>
+            <button onclick="add('8')" >8</button>
+            <button onclick="add('9')" >9</button>
+            <button onclick="add('x')"  class="operator">x</button>
+        </div>
+
+        <div>
+            <button onclick="add('4')" >4</button>
+            <button onclick="add('5')" >5</button>
+            <button onclick="add('6')" >6</button>
+            <button onclick="add('-')"  class="operator">-</button>
+        </div>
+
+        <div>
+            <button onclick="add('1')" >1</button>
+            <button onclick="add('2')" >2</button>
+            <button onclick="add('3')" >3</button>
+            <button onclick="add('+')"  class="operator">+</button>
+        </div>
+
+        <div>
+            <button onclick="add('%')" >%</button>
+            <button onclick="add('0')" >0</button>
+            <button onclick="add('.')" >.</button>
+            <button onclick="add('=')"  class="eq-operator">=</button>
+        </div>
+    </div>
+    
+</body>
+
+</html>
